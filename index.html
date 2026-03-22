@@ -228,4 +228,45 @@
     const count = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3)).length;
     const b = document.getElementById('nav-badge');
     if (count > 0) { b.innerText = count; b.classList.remove('hidden'); } 
-    else { b.classList.add('hidden');
+    else { b.classList.add('hidden'); }
+  }
+
+  function hunt() {
+    const q = document.getElementById('q-search').value;
+    if (!q) return;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+prices+near+me&tbm=shop`, '_blank');
+  }
+
+  function go(v) {
+    document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan');
+    document.getElementById('view-deals').classList.toggle('hidden', v !== 'deals');
+    document.getElementById('n-scan').classList.toggle('active', v === 'scan');
+    document.getElementById('n-deals').classList.toggle('active', v === 'deals');
+    if (v === 'deals') renderDeals();
+    if (v === 'scan') updateLog();
+  }
+
+  function renderDeals() {
+    const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
+    const now = Date.now();
+    const list = document.getElementById('deals-list');
+    const items = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3));
+    list.innerHTML = items.map(i => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-left: 4px solid var(--blue);">
+        <div><b>${i.n}</b><br><small style="color:#fbbf24; font-weight:bold;">Refill Advised</small></div>
+        <button class="btn" style="width:auto; padding:10px 15px; margin:0; background:var(--blue); font-size:12px;" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(i.n)}+prices+near+me&tbm=shop','_blank')">COMPARE</button>
+      </div>
+    `).join('') || "<p style='text-align:center;color:var(--sub); padding:40px 0; font-size:14px;'>All supplies within safety levels.</p>";
+  }
+
+  // FORCE-LISTEN FOR MOBILE CLICKS
+  document.getElementById('n-scan').addEventListener('click', function() { go('scan'); });
+  document.getElementById('n-deals').addEventListener('click', function() { go('deals'); });
+
+  window.onload = function() {
+    updateLog();
+    go('scan'); 
+  };
+</script>
+</body>
+</html>
