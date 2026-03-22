@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; padding: 15px; padding-bottom: 90px; }
+    .card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px; }
+    h1 { color: #22c55e; font-size: 20px; margin: 0; }
+    .btn { background: #22c55e; color: white; padding: 18px; width: 100%; border-radius: 10px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; margin-top: 10px; box-sizing: border-box; }
+    input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; box-sizing: border-box; }
+    .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; display: flex; height: 70px; border-top: 1px solid #334155; }
+    .nav-btn { flex: 1; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: bold; font-size: 12px; }
+    .active-nav { color: #22c55e; border-top: 3px solid #22c55e; }
+    .log-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #334155; font-size: 14px; }
+    .hidden { display: none !important; }
+    #status { color: #22c55e; font-weight: bold; margin: 10px 0; font-size: 13px; }
+  </style>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+
+  <div id="view-scan">
+    <h1>🛒 Grocery Mercenary</h1>
+    <div id="status">READY</div>
+
+    <div id="box-camera" class="card">
+      <label for="file-up" class="btn">📸 SNAP BARCODE</label>
+      <input type="file" id="file-up" accept="image/*" capture="environment" onchange="runScan(this)" style="display:none">
+    </div>
+
+    <div id="box-form" class="card hidden">
+      <input type="text" id="in-name" placeholder="Item Name">
+      <select id="in-freq">
+        <option value="1">Daily</option>
+        <option value="7">Weekly</option>
+        <option value="14">Bi-Weekly</option>
+        <option value="30" selected>Monthly</option>
+      </select>
+      <button class="btn" onclick="saveNow()">✅ SAVE NOW</button>
+      <button class="btn" style="background:#475569" onclick="resetApp()">CANCEL</button>
+    </div>
+
+    <div id="log-container" class="card" style="padding:0;"></div>
+  </div>
+
+  <div id="view-deals" class="hidden">
+    <h1>🎯 Price Hunter</h1>
+    <div class="card">
+      <input type="text" id="q-search" placeholder="Search any item...">
+      <button class="btn" style="background:#3b82f6;" onclick="hunt()">🔍 FIND DEALS</button>
+    </div>
+    <div id="deals-list"></div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-btn active-nav" id="n-scan" onclick="go('scan')">SCANNER</div>
+    <div class="nav-btn" id="n-deals" onclick="go('deals')">DEALS</div>
+  </div>
+
+<script>
+  let sku = "MANUAL";
+  const reader = new Html5Qrcode("status");
+
+  function runScan(input) {
+    if (!input.files[0]) return;
+    document.getElementById('status').innerText = "📡 SCANNING...";
+    reader.scanFile(input.files[0], true).then(res => {
+      sku = res;
+      openForm();
+    }).catch(e => {
+      sku = "UNKNOWN";
+      openForm();
+    });
+  }
+
+  function openForm() {
+    document.getElementById('box-camera').classList.add('hidden');
+    document.getElementById('box-form').classList.remove('hidden');
+    document.getElementById('status').innerText = "TARGET IDENTIFIED";
+  }
+
+  function resetApp() {
+    document.getElementById('box-form').classList.add('hidden');
+    document.getElementById('box-camera').classList.remove('hidden');
+    document.getElementById('in-name').value = "";
+    document.getElementById('file-up').value = "";
+    document.getElementById('status').innerText = "READY";
+    updateLog();
+  }
+
+  function saveNow() {
+    const name = document.getElementById('in-name').value;
+    if (!name) return alert("Name item!");
+
+    // Save to LocalStorage
+    const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
+    p.unshift({ n: name, f: document.getElementById('in-freq').value, d: Date.now(), s: sku });
+    localStorage.setItem('pantry_db', JSON.stringify(p));
+
+    // Instant Feedback
+    document.getElementById('status').innerText = "✅ SAVED!";
+    resetApp();
+  }
+
+  function updateLog() {
+    const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
+    const container = document.getElementById('log-container');
+    container.innerHTML = p.slice(0, 10).map(i => `
+      <div class="log-row">
+        <span><b>${i.n}</b></span>
+        <span style="color:#22c55e">LOGGED</span>
+      </div>
+    `).join('') || "<p style='padding:20px;color:#64748b'>No scans yet.</p>";
+  }
+
+  function hunt() {
+    const q = document.getElementById('q-search').value;
+    if (!q) return;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+prices+near+me&tbm=shop`, '_blank');
+  }
+
+  function go(v) {
+    document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan');
+    document.getElementById('view-deals').classList.toggle('hidden', v !== 'deals');
+    document.getElementById('n-scan').classList.toggle('active-nav', v === 'scan');
+    document.getElementById('n-deals').classList.toggle('active-nav', v === 'deals');
+    if (v === 'deals') renderDeals();
+    if (v === 'scan') updateLog();
+  }
+
+  function renderDeals() {
+    const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
+    const now = Date.now();
+    const list = document.getElementById('deals-list');
+    
+    const items = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3));
+    list.innerHTML = items.map(i => `
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; border:1px solid #22c55e;">
+        <span><b>${i.n}</b></span>
+        <button class="btn" style="width:auto; padding:8px 12px; margin:0; background:#3b82f6; font-size:12px;" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(i.n)}+prices+near+me&tbm=shop','_blank')">COMPARE</button>
+      </div>
+    `).join('') || "<p style='text-align:center;color:#94a3b8;'>Pantry full.</p>";
+  }
+
+  window.onload = updateLog;
+</script>
+</body>
+</html>
