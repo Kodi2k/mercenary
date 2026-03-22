@@ -60,7 +60,7 @@
     input, select { width: 100%; padding: 16px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; background: #0c111e; color: var(--text); font-size: 16px; box-sizing: border-box; outline: none; }
     input:focus { border-color: var(--green); }
 
-   /* --- NAVIGATION CLICK-FIX --- */
+    /* --- NAVIGATION CLICK-FIX --- */
     .nav { 
       position: fixed; 
       bottom: 0; 
@@ -111,12 +111,27 @@
     }
     
     /* --- NOTIFICATION BADGE --- */
-    .badge { position: absolute; top: 12px; right: 30%; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid var(--card); }
+    .badge { 
+      position: absolute; 
+      top: 10px; 
+      right: 25%; 
+      background: #ef4444; 
+      color: white; 
+      border-radius: 50%; 
+      width: 16px; 
+      height: 16px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 9px; 
+      font-weight: 900; 
+      border: 2px solid var(--card);
+      pointer-events: none;
+    }
 
     .log-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #334155; font-size: 14px; align-items: center; }
     .hidden { display: none !important; }
     
-    /* --- DEALS STYLING --- */
     .deal-card { border-left: 4px solid var(--blue); }
   </style>
   <script src="https://unpkg.com/html5-qrcode"></script>
@@ -156,13 +171,23 @@
   </div>
 
   <div id="view-deals" class="hidden">
-    <h1>🎯 Price Hunter</h1>
-    <div class="subtitle" style="margin-bottom:20px">Active Local Price Comparison</div>
-    <div class="card">
+    <header style="border-bottom:none; padding-bottom:0; margin-bottom:10px;">
+      <h1 style="color:var(--blue)">🎯 Price Hunter</h1>
+      <div class="subtitle">ACTIVE PRICE INTELLIGENCE</div>
+    </header>
+    
+    <div class="card" style="border-top: 4px solid var(--blue);">
       <input type="text" id="q-search" placeholder="Quick Search (e.g. Ribeye Steak)">
       <button class="btn" style="background:var(--blue);" onclick="hunt()">🔍 FIND LOCAL PRICES</button>
     </div>
+
     <div id="deals-list"></div>
+
+    <div style="margin-top: 60px; padding: 20px; border-top: 1px dashed #475569; text-align: center; opacity: 0.6;">
+      <div style="color: var(--sub); font-size: 10px; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px;">SYSTEM ADMINISTRATION</div>
+      <button onclick="nukeAll()" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; font-size: 11px; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">🗑️ CLEAR ALL SYSTEM DATA</button>
+      <div style="color: var(--sub); font-size: 9px; margin-top: 10px;">Warning: This action is permanent.</div>
+    </div>
   </div>
 
   <div class="nav">
@@ -252,11 +277,20 @@
     const list = document.getElementById('deals-list');
     const items = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3));
     list.innerHTML = items.map(i => `
-      <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-left: 4px solid var(--blue);">
+      <div class="card deal-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; margin-bottom:10px;">
         <div><b>${i.n}</b><br><small style="color:#fbbf24; font-weight:bold;">Refill Advised</small></div>
         <button class="btn" style="width:auto; padding:10px 15px; margin:0; background:var(--blue); font-size:12px;" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(i.n)}+prices+near+me&tbm=shop','_blank')">COMPARE</button>
       </div>
     `).join('') || "<p style='text-align:center;color:var(--sub); padding:40px 0; font-size:14px;'>All supplies within safety levels.</p>";
+  }
+
+  function nukeAll() {
+    const confirmation = confirm("⚠️ SYSTEM ALERT: This will permanently wipe your entire pantry list and history. Proceed?");
+    if (confirmation) {
+      localStorage.clear();
+      alert("System Wiped. Reloading...");
+      location.reload(); 
+    }
   }
 
   // FORCE-LISTEN FOR MOBILE CLICKS
