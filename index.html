@@ -4,38 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Grocery Mercenary</title>
+  
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0F172A">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3724/3724720.png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root { --bg: #0F172A; --card: #1E293B; --green: #22C55E; --blue: #3B82F6; --text: #f8fafc; --sub: #94a3b8; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 90px; }
     
-    /* 1. PROFESSIONAL HEADER STYLE */
-    header { padding: 10px 0 20px 0; text-align: left; border-bottom: 1px solid #334155; margin-bottom: 15px; }
-    .title-row { display: flex; align-items: center; }
-    h1 { color: var(--green); font-size: 20px; margin: 0; font-weight: bold; }
-    .subtitle { color: var(--text); font-size: 11px; margin-top: 3px; font-weight: normal; opacity: 0.8; text-transform: none; }
-    #status { color: var(--green); font-size: 12px; margin-top: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
 
-    .card { background: var(--card); padding: 18px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    .btn { background: var(--green); color: white; padding: 16px; width: 100%; border-radius: 10px; font-weight: bold; border: none; cursor: pointer; font-size: 15px; box-sizing: border-box; display: block; text-align: center; text-decoration: none; }
-    input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #0c111e; color: var(--text); font-size: 16px; box-sizing: border-box; }
+    /* --- CENTERED PROFESSIONAL HEADER --- */
+    header { 
+      padding: 30px 0 25px 0; 
+      text-align: center; 
+      border-bottom: 1px solid #334155; 
+      margin-bottom: 25px; 
+    }
+    .title-row { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px;
+    }
+    h1 { color: var(--green); font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
+    .subtitle { 
+      color: var(--text); 
+      font-size: 11px; 
+      margin-top: 6px; 
+      font-weight: 700; 
+      opacity: 0.7; 
+      text-transform: uppercase; 
+      letter-spacing: 2.5px;
+    }
+    #status { 
+      color: var(--green); 
+      font-size: 10px; 
+      margin-top: 12px; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      letter-spacing: 1.5px;
+      background: rgba(34, 197, 94, 0.15); 
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    /* --- UI COMPONENTS --- */
+    .card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+    .btn { background: var(--green); color: white; padding: 18px; width: 100%; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 16px; display: block; text-align: center; text-decoration: none; transition: transform 0.1s; }
+    .btn:active { transform: scale(0.98); }
     
-    /* 2. NAVIGATION ICONS AND STATES (SVG) */
-    .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card); display: flex; height: 75px; border-top: 1px solid #334155; z-index: 1000; justify-content: space-around; padding: 5px 0; }
-    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); font-size: 11px; font-weight: bold; cursor: pointer; text-decoration: none; position: relative; }
+    input, select { width: 100%; padding: 16px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; background: #0c111e; color: var(--text); font-size: 16px; box-sizing: border-box; outline: none; }
+    input:focus { border-color: var(--green); }
+
+    /* --- NAVIGATION --- */
+    .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card); display: flex; height: 80px; border-top: 1px solid #334155; z-index: 1000; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); font-size: 11px; font-weight: 700; cursor: pointer; position: relative; transition: 0.2s; }
     .nav-item.active { color: var(--green); }
-    .nav-item.active::before { content: ''; position: absolute; top: -5px; left: 20px; right: 20px; height: 3px; background: var(--green); border-radius: 2px; }
-    .nav-icon { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; }
+    .nav-item.active::before { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 4px; background: var(--green); border-radius: 0 0 4px 4px; }
+    .nav-icon { width: 26px; height: 26px; margin-bottom: 5px; fill: currentColor; }
     
-    /* 3. RED NOTIFICATION BADGE (BULLSEYE) */
-    .badge { position: absolute; top: 1px; right: 28px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; box-shadow: 0 0 6px rgba(239, 68, 68, 0.6); }
+    /* --- NOTIFICATION BADGE --- */
+    .badge { position: absolute; top: 12px; right: 30%; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid var(--card); }
 
-    .log-row { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #334155; font-size: 14px; background: #141b2b; }
+    .log-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #334155; font-size: 14px; align-items: center; }
     .hidden { display: none !important; }
-    .active-row { border: 2px solid var(--green); box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+    
+    /* --- DEALS STYLING --- */
+    .deal-card { border-left: 4px solid var(--blue); }
   </style>
   <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
@@ -43,11 +82,11 @@
 
   <header>
     <div class="title-row">
-      <span style="font-size:22px; margin-right:8px;">🛒</span>
+      <span style="font-size:24px;">🛒</span>
       <h1>Grocery Mercenary</h1>
     </div>
     <div class="subtitle">LOCAL PRICE AGENT</div>
-    <div id="status">System Ready</div>
+    <div id="status">SYSTEM READY</div>
   </header>
 
   <div id="view-scan">
@@ -56,8 +95,9 @@
       <input type="file" id="file-up" accept="image/*" capture="environment" onchange="runScan(this)" style="display:none">
     </div>
 
-    <div id="box-form" class="card hidden active-row">
-      <input type="text" id="in-name" placeholder="Item Name">
+    <div id="box-form" class="card hidden" style="border: 2px solid var(--green);">
+      <h3 style="margin-top:0; color:var(--green)">TARGET ACQUIRED</h3>
+      <input type="text" id="in-name" placeholder="Item Name (e.g. Bread)">
       <select id="in-freq">
         <option value="1">Daily Essentials</option>
         <option value="7">Weekly Staples</option>
@@ -65,49 +105,50 @@
         <option value="30" selected>Monthly Supply</option>
       </select>
       <button class="btn" onclick="saveNow()">✅ ADD TO PANTRY</button>
-      <button class="btn" style="background:#475569" onclick="resetApp()">CANCEL</button>
+      <button class="btn" style="background:#475569; margin-top:10px;" onclick="resetApp()">CANCEL</button>
     </div>
 
-    <div style="font-size:12px; color:var(--green); margin: 15px 0 5px 0; font-weight:bold; text-transform:uppercase;">Recent Pantry Logs</div>
+    <div style="font-size:11px; color:var(--green); margin: 20px 0 8px 0; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Recent Pantry Logs</div>
     <div id="log-container" class="card" style="padding:0; overflow:hidden;"></div>
   </div>
 
   <div id="view-deals" class="hidden">
-    <h1>🎯 Refill Targets</h1>
-    <div class="subtitle" style="margin-bottom:20px">Active Price Comparison Hunts</div>
-    <div class="card" style="border:1px solid var(--blue)">
-      <input type="text" id="q-search" placeholder="Quick Search Ribeye Steak, etc.">
-      <button class="btn" style="background:var(--blue); font-size:14px;" onclick="hunt()">🔍 FIND LOCAL PRICES</button>
+    <h1>🎯 Price Hunter</h1>
+    <div class="subtitle" style="margin-bottom:20px">Active Local Price Comparison</div>
+    <div class="card">
+      <input type="text" id="q-search" placeholder="Quick Search (e.g. Ribeye Steak)">
+      <button class="btn" style="background:var(--blue);" onclick="hunt()">🔍 FIND LOCAL PRICES</button>
     </div>
     <div id="deals-list"></div>
   </div>
 
   <div class="nav">
     <div class="nav-item active" id="n-scan" onclick="go('scan')">
-      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 9a3 3 0 1 1-3 3 3 3 0 0 1 3-3m10 3a2 2 0 0 0-2-2h-3.17a2 2 0 0 1-1.41-.59l-.83-.82A4 4 0 0 0 11.76 7H12.2a4 4 0 0 0-2.83 1.17l-.82.83a2 2 0 0 1-1.41.59H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM12 18a6 6 0 1 1 6-6 6 6 0 0 1-6 6z" fill-rule="evenodd"></path></svg>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 9a3 3 0 1 1-3 3 3 3 0 0 1 3-3m10 3a2 2 0 0 0-2-2h-3.17a2 2 0 0 1-1.41-.59l-.83-.82A4 4 0 0 0 11.76 7H12.2a4 4 0 0 0-2.83 1.17l-.82.83a2 2 0 0 1-1.41.59H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM12 18a6 6 0 1 1 6-6 6 6 0 0 1-6 6z"></path></svg>
       SCANNER
     </div>
     <div class="nav-item" id="n-deals" onclick="go('deals')">
-      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm0-14a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z" fill-rule="evenodd"></path></svg>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm0-14a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm0-6a2 2 0 1 0 2 2 2 2 0 0 0-2-2z"></path></svg>
       PRICE HUNTER
-      <div class="badge">1</div> </div>
+      <div id="nav-badge" class="badge hidden">0</div>
+    </div>
   </div>
 
 <script>
   let sku = "MANUAL";
   const reader = new Html5Qrcode("status");
-  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.log("SW failed", err)); }); }
+  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(e => {}); }); }
 
   function runScan(input) {
     if (!input.files[0]) return;
-    document.getElementById('status').innerText = "📡 ANALYZING TARGET...";
+    document.getElementById('status').innerText = "📡 ANALYZING...";
     reader.scanFile(input.files[0], true).then(res => { sku = res; openForm(); }).catch(e => { sku = "MANUAL"; openForm(); });
   }
 
   function openForm() {
     document.getElementById('box-camera').classList.add('hidden');
     document.getElementById('box-form').classList.remove('hidden');
-    document.getElementById('status').innerText = "BARCODE ACQUIRED";
+    document.getElementById('status').innerText = "TARGET IDENTIFIED";
   }
 
   function resetApp() {
@@ -121,11 +162,11 @@
 
   function saveNow() {
     const name = document.getElementById('in-name').value;
-    if (!name) return alert("Name item!");
+    if (!name) return alert("Enter Name!");
     const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
     p.unshift({ n: name, f: document.getElementById('in-freq').value, d: Date.now(), s: sku });
     localStorage.setItem('pantry_db', JSON.stringify(p));
-    document.getElementById('status').innerText = "✅ TARGET SAVED!";
+    document.getElementById('status').innerText = "✅ SAVED TO PANTRY";
     resetApp();
   }
 
@@ -133,39 +174,15 @@
     const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
     const container = document.getElementById('log-container');
     container.innerHTML = p.slice(0, 10).map(i => `
-      <div class="log-row"><span><b>${i.n}</b></span><span style="color:#22C55E; font-size:10px; text-transform:uppercase;">● LOGGED</span></div>
-    `).join('') || "<p style='padding:20px;color:var(--sub); font-size:12px;'>Waiting for first acquisition.</p>";
+      <div class="log-row"><span><b>${i.n}</b></span><span style="color:var(--green); font-size:10px; font-weight:800;">● LOGGED</span></div>
+    `).join('') || "<p style='padding:25px;color:var(--sub); font-size:12px; text-align:center;'>Ready for your first scan.</p>";
+    refreshBadge();
   }
 
-  function hunt() {
-    const q = document.getElementById('q-search').value;
-    if (!q) return;
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}+prices+near+me&tbm=shop`, '_blank');
-  }
-
-  function go(v) {
-    document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan');
-    document.getElementById('view-deals').classList.toggle('hidden', v !== 'deals');
-    document.getElementById('n-scan').classList.toggle('active', v === 'scan');
-    document.getElementById('n-deals').classList.toggle('active', v === 'deals');
-    if (v === 'deals') renderDeals();
-    if (v === 'scan') updateLog();
-  }
-
-  function renderDeals() {
+  function refreshBadge() {
     const p = JSON.parse(localStorage.getItem('pantry_db') || "[]");
     const now = Date.now();
-    const list = document.getElementById('deals-list');
-    const items = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3));
-    list.innerHTML = items.map(i => `
-      <div class="card log-row" style="margin-bottom:10px; padding:15px; border-radius:10px; border:none; display:flex; justify-content:space-between; align-items:center;">
-        <div><b>${i.n}</b><br><small style="color:#fbbf24">Refill Recommendation</small></div>
-        <button class="btn" style="width:auto; padding:10px 15px; margin:0; background:var(--blue); font-size:12px; font-weight:normal;" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(i.n)}+prices+near+me&tbm=shop','_blank')">COMPARE</button>
-      </div>
-    `).join('') || "<p style='text-align:center;color:var(--sub); padding:40px 0;'>All targets stocked.</p>";
-  }
-
-  window.onload = updateLog;
-</script>
-</body>
-</html>
+    const count = p.filter(i => (now - i.d) / 86400000 >= (i.f - 3)).length;
+    const b = document.getElementById('nav-badge');
+    if (count > 0) { b.innerText = count; b.classList.remove('hidden'); } 
+    else { b.classList.add('hidden');
